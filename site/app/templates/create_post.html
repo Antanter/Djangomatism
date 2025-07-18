@@ -9,7 +9,7 @@
     <form method="post">
         {% csrf_token %}
         <textarea name="text" rows="5" cols="50" placeholder="Write your post here..."></textarea><br>
-        <button type="submit">📤 Publish</button>
+        <button type="submit">Publish</button>
     </form>
     <p><a href="{% url 'post_list' %}">⬅ Back to posts</a></p>
 </body>

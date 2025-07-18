@@ -23,7 +23,6 @@ def post_list(request):
 
     return render(request, 'post_template.html', {'posts': posts})
 
-
 def toggle_like(request, post_id):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Not authenticated'}, status=401)
