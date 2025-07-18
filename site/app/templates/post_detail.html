@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.text|truncatechars:20 }}</title>
+</head>
+<body>
+    <h1>Post</h1>
+    <p>{{ post.text }}</p>
+    <p><strong>Author:</strong> {{ post.user.username }}</p>
+    <p><strong>Date:</strong> {{ post.created_at|date:"Y-m-d H:i" }}</p>
+
+    <h2>Comments:</h2>
+    {% for comment in post.comments.all %}
+        <p><strong>{{ comment.user.username }}</strong>: {{ comment.text }}</p>
+    {% empty %}
+        <p>There're no comments yet.</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_comment' post.id %}">
+            {% csrf_token %}
+            <textarea name="text" rows="3" cols="50" placeholder="Comment..."></textarea><br>
+            <button type="submit">💬 Submit</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Login</a>, to write comments.</p>
+    {% endif %}
+
+    <p><a href="{% url 'post_list' %}">⬅ Back to posts</a></p>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
+    <script>
+        function toggleLike(postId) {
+            fetch(`/like/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likeText = document.getElementById(`like-text-${postId}`);
+                likeText.innerText = `${data.likes_count} ` + (data.liked ? "❤️" : "🤍");
+            });
+        }
+        function openPost(postId) {
+            window.location.href = `/post/${postId}/`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Posts</h1>
+    {% for post in posts %}
+        <div style="border:3px solid #ccc; padding:10px; margin:10px; border-radius: 5px; display: grid; row-gap: 2px;">
+            <div><strong>Author:</strong> {{ post.user.username }} </div><br>
+            <div><strong>Date and time:</strong> {{ post.created_at|date:"Y-m-d H:i" }} </div><br>
+            <div><strong>Message:</strong> {{ post.text }} </div><br>
+            <div style="display: flex; gap: 20px;">
+                <div>
+                    <span id="like-text-{{ post.id }}" style="cursor: pointer;" onclick="toggleLike('{{ post.id }}')">
+                        {% if post.is_liked %}
+                            {{ post.likes.count }} ❤️
+                        {% else %}
+                            {{ post.likes.count }} 🤍
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                    <span id="comment-text-{{ post.id }}" style="cursor: pointer;" onclick="openPost('{{ post.id }}')">{{ post.comments.count }} 💬 </span>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>There are no posts yet.</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <p><a href="{% url 'create_post' %}">➕ Add new post</a></p>
+    {% else %}
+        <p><a href="{% url 'login' %}">Login to create posts</a></p>
+    {% endif %}
+</body>
+</html>
